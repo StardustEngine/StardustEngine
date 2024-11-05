@@ -1,5 +1,3 @@
-<h1 align="center">StardustEngine</h1>
-
 <a>
   <img src="https://media.githubusercontent.com/media/StardustEngine/StardustResource/main/logos/stardust_logo.svg" width="100%">
 </a>
