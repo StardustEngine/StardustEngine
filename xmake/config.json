@@ -1,0 +1,4 @@
+{
+    "header_ext": [ ".h", ".hpp" ],
+    "source_ext": [ ".c", ".cpp" ]
+}
