@@ -15,6 +15,6 @@ Vector3 {
 };
 
 [[clang::annotate("__reflect__")]]
-void GlobalTestFunction();
+void GlobalTestFunction1();
 
 } // namespace Test
