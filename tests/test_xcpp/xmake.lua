@@ -1,7 +1,3 @@
-target("test_xcpp")
-    -- set_default(false)
-    set_kind("static")
-    add_rules("c++.codegen", {
-        root = "test"
-    })
-    add_files("test/**.cpp")
+includes("lib_module1/xmake.lua")
+includes("lib_module2/xmake.lua")
+includes("main_module/xmake.lua")
