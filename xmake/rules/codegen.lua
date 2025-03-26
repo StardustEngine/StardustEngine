@@ -1,4 +1,4 @@
-rule("c++.codegen")
+rule("sdust.codegen")
     on_config(function (target)
         import("xcpp.module").setup(target)
     end)
