@@ -4,7 +4,7 @@
 
 namespace Test {
 
-void GlobalTestFunction2()
+void globalTestFunction2()
 {
     std::cout << "Hello, Test2!\n";
 }

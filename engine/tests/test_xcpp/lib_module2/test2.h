@@ -11,6 +11,6 @@ TestEnum {
 };
 
 [[clang::annotate("__reflect__")]]
-void GlobalTestFunction2();
+void globalTestFunction2();
 
 } // namespace Test
