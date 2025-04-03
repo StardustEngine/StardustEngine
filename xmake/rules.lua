@@ -1,2 +1,2 @@
-includes("rules/codegen.lua")
-includes("rules/test.lua")
+includes("rules/xcpp.lua")
+includes("rules/sdust.lua")

@@ -1,0 +1,12 @@
+target("test_xcpp_lib1")
+    set_default(false)
+    set_kind("static")
+    add_includedirs(".", { public = true })
+    add_files("**.cpp")
+
+target_component("test_xcpp_lib1", "autogen")
+    set_kind("headeronly")
+    add_files("**.h")
+    set_values("rootdir", ".")
+    add_values("tmpls", "xcpp.tmpl.test")
+    add_rules("xcpp.autogen")

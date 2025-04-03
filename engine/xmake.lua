@@ -1,2 +1,5 @@
-includes("sources/xmake.lua")
-includes("tests/xmake.lua")
+includes("sources/**/xmake.lua")
+includes("templates/**/xmake.lua")
+
+add_requires("doctest")
+includes("tests/**/xmake.lua")

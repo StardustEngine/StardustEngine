@@ -1,5 +1,0 @@
-target("test_xcpp_lib2")
-    set_default(false)
-    set_kind("static")
-    add_rules("sdust.codegen", { rootdir = ".", tmpls = { "refl" } })
-    add_files("**.cpp")

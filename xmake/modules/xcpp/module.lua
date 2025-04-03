@@ -1,73 +1,59 @@
-import("core.base.json")
+import("core.base.task")
 import("core.language.language")
 import("core.tool.compiler")
 import("lib.detect.find_program")
+import("xcpp.utils", { alias = "xcpp_utils" })
 
 function _recreate_dir(dir)
     os.tryrm(dir)
     os.mkdir(dir)
 end
 
-function _is_headerfile(target, filepath)
-    for _, headerkind in ipairs(target:values("c++.headerkinds")) do
-        if path.extension(filepath) == headerkind then
-            return true
-        end
-    end
-    return false
-end
-
-function _add_headerfiles(target, includedir)
-    target:add("includedirs", includedir, { public = true })
-    for _, headerfile_path in ipairs(os.files(path.join(includedir, "**"))) do
-        if _is_headerfile(target, headerfile_path) then
-            target:add("headerfiles", headerfile_path)
-        end
-    end
-end
-
 -- NOTICE:
 -- this function will mainly process the target's rootdir.
 -- when the rootdir isn't exists, it will raise an error.
-function setup(target)
-    local full_rootdir = path.join(target:scriptdir(), target:extraconf("rules", "sdust.codegen", "rootdir"))
+function autogen_setup(target)
+    local full_rootdir = path.join(target:scriptdir(), target:values("rootdir"))
     if not os.isdir(full_rootdir) then
         raise("rootdir \"%s\" not exists.", full_rootdir)
     end
     target:set("values", "rootdir", full_rootdir)
 
-    -- rootdir should be added to includedirs,
-    -- then the directory containing the generated files will be added to the include path in "codegen_process"
-    _add_headerfiles(target, full_rootdir)
+    local autogendir = path.join(xcpp_utils.autogendir(), target:values("ownername"))
+    target:set("values", "autogendir", autogendir)
+    _recreate_dir(autogendir)
+
+    local metadir = path.join(autogendir, "meta")
+    target:set("values", "metadir", metadir)
+    os.mkdir(metadir)
+
+    local generatedir = path.join(autogendir, "generated")
+    target:set("values", "generatedir", generatedir)
+    os.mkdir(generatedir)
+
+    target:add("includedirs", generatedir, { public = true })
 end
 
-function codegen_process(target)
+function autogen_process(target)
 
-    print("processing codegen for \"%s\".", target:name())
-
-    local autogendir = path.join(os.projectdir(), target:autogendir())
-
-    local meta_dir = path.join(autogendir, "meta")
-    _recreate_dir(meta_dir)
-    local generate_dir = path.join(autogendir, "generated")
-    _recreate_dir(generate_dir)
+    print("generating meta for \"%s\".", target:name())
 
     -- collect all header files and generate "collection.hpp"
     local collection = "#pragma once\n"
-    for _, headerfile in ipairs(target:headerfiles()) do
-        local relative_path = path.relative(headerfile, autogendir)
+    for _, headerfile in ipairs(target:sourcebatches()["xcpp.autogen"].sourcefiles) do
+        local relative_path = path.relative(headerfile, target:values("autogendir"))
         collection = collection .. "#include \"" .. relative_path .. "\"\n"
     end
-    local collection_path = path.join(autogendir, "collection.hpp")
+    local collection_path = path.join(target:values("autogendir"), "collection.hpp")
     io.writefile(collection_path, collection)
 
-    cprint("${bright green}generated:${clear} %s", collection_path)
+    cprint("${bright green}generated meta:${clear} %s", collection_path)
 
     -- collect xparse's arguments and run it
     local args = {
         collection_path,
         "--root=" .. target:values("rootdir"),
-        "--output=" .. meta_dir,
+        "--output=" .. target:values("metadir"),
     }
 
     local compilations = compiler.compflags(".cpp", { target = target })
@@ -89,66 +75,35 @@ function codegen_process(target)
     end
 
     -- render the code (currently we use mustache)
-    local tmpls = target:extraconf("rules", "sdust.codegen", "tmpls")
+    local tmpls = target:values("tmpls")
     if not tmpls or #tmpls == 0 then
         cprint("${bright yellow}warning:${clear} no templates specified for %s, processing ended.", target:name())
         return
     end
 
     for _, tmpl in ipairs(tmpls) do
-        for _, metafile in ipairs(os.files(path.join(meta_dir, "**"))) do
+        print("use template \"%s\" to process autogen.", tmpl)
 
-            print("using template \"%s\" to generate code for \"%s\".", tmpl, path.filename(metafile))
-
-            local raw_metadata = json.loadfile(metafile)
-            local data, use_tmpls = {}, {}
-            try {
-                function ()
-                    local tmpl_func
-                    for _, tmpldir in ipairs(target:values("xcpp.tmpldirs")) do
-                        tmpl_func = import(tmpl, { rootdir = tmpldir, try = true, anonymous = true })
-                        if type(tmpl_func) == "function" then
-                            break
-                        end
-                    end
-                    if tmpl_func then
-                        data, use_tmpls = tmpl_func(raw_metadata)
-                    else
-                        raise("can't find template named %s.", tmpl)
-                    end
-                end,
-                catch {
-                    function (errors)
-                        cprint("${bright yellow}warning:${clear} failed to use template \"%s\", %s", tmpl, errors)
-                    end
-                }
+        try {
+            function ()
+                task.run(tmpl, {}, target)
+                print("autogen task \"%s\" has been finished.", tmpl)
+            end,
+            catch {
+                function (errors)
+                    cprint("${bright yellow}warning:${clear} Running autogen task \"%s\" failed, reason:\n\t%s", tmpl, errors)
+                end
             }
-
-            for _, use_tmpl in ipairs(use_tmpls) do
-                local use_tmpl_path
-                for _, tmpldir in ipairs(target:values("xcpp.tmpldirs")) do
-                    use_tmpl_path = path.join(tmpldir, use_tmpl)
-                end
-                if os.isfile(use_tmpl_path) then
-                    local tmpl_content = io.readfile(use_tmpl_path)
-                    local rendered_content = import("xcpp.tmpl").render(tmpl_content, data)
-
-                    local output_filename = path.basename(metafile) .. "." .. path.basename(use_tmpl)
-                    local output_dir_path = path.join(generate_dir, path.relative(path.directory(metafile), meta_dir))
-                    os.mkdir(output_dir_path)
-
-                    local output_file_path = path.join(output_dir_path, output_filename)
-                    io.writefile(output_file_path, rendered_content)
-
-                    cprint("${bright green}generated:${clear} %s", output_file_path)
-                else
-                    cprint("${bright yellow}warning:${clear} template \"%s\" not exists.", use_tmpl)
-                end
-            end
-        end
+        }
     end
+    cprint("autogen process for \"%s\" finished.", target:name())
+end
 
-    _add_headerfiles(target, generate_dir)
+function autogen_clean(target)
+    os.tryrm(target:values("autogendir"))
 
-    cprint("codegen process for \"%s\" finished.", target:name())
+    -- if autogendir is empty, then try to remove it.
+    if #os.filedirs(path.join(xcpp_utils.autogendir(), "*")) == 0 then
+        os.tryrm(xcpp_utils.autogendir())
+    end
 end
