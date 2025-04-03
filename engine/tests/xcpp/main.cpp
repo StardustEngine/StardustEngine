@@ -1,4 +1,4 @@
-#include <doctest/doctest.h>
+#include <doctest.h>
 
 #include <test_xcpp_lib1/all_refl.hpp>
 #include <test_xcpp_lib2/all_refl.hpp>

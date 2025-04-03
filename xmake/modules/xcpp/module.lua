@@ -4,11 +4,6 @@ import("core.tool.compiler")
 import("lib.detect.find_program")
 import("xcpp.utils", { alias = "xcpp_utils" })
 
-function _recreate_dir(dir)
-    os.tryrm(dir)
-    os.mkdir(dir)
-end
-
 -- NOTICE:
 -- this function will mainly process the target's rootdir.
 -- when the rootdir isn't exists, it will raise an error.
@@ -21,7 +16,7 @@ function autogen_setup(target)
 
     local autogendir = path.join(xcpp_utils.autogendir(), target:values("ownername"))
     target:set("values", "autogendir", autogendir)
-    _recreate_dir(autogendir)
+    os.mkdir(autogendir)
 
     local metadir = path.join(autogendir, "meta")
     target:set("values", "metadir", metadir)
