@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace TestXcpp {
 
 struct
@@ -13,5 +15,8 @@ Vector3 {
     static const Vector3 Zero;
     static const Vector3 One;
 };
+
+[[clang::annotate("__reflect__")]]
+void globalTestFunction1(const std::string& str, int num);
 
 } // namespace TestXcpp

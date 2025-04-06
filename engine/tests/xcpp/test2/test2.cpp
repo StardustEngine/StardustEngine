@@ -2,11 +2,11 @@
 
 #include <iostream>
 
-namespace Test {
+namespace TestXcpp {
 
 void globalTestFunction2()
 {
     std::cout << "Hello, Test2!\n";
 }
 
-} // namespace Test
+} // namespace TestXcpp

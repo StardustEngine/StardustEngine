@@ -11,4 +11,7 @@ TEST_CASE("test the codegen function")
     TestXcpp::MetaRegistrar::registerModule_TestXcppLib2(metadata);
 
     CHECK(metadata.find("Vector3") != metadata.end());
+    CHECK(metadata.find("TestEnum") != metadata.end());
+    CHECK(metadata.find("globalTestFunction1") != metadata.end());
+    CHECK(metadata.find("globalTestFunction2") != metadata.end());
 }
