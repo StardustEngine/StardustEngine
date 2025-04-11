@@ -5,8 +5,7 @@
 
 namespace TestXcpp {
 
-struct
-XCPP_MARK()
+XSTRUCT()
 Vector3 {
 
     float x = 0.0;
@@ -17,7 +16,7 @@ Vector3 {
     static const Vector3 One;
 };
 
-XCPP_MARK()
+XMARK()
 void globalTestFunction1(const std::string& str, int num);
 
 } // namespace TestXcpp

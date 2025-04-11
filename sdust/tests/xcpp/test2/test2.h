@@ -5,15 +5,14 @@
 
 namespace TestXcpp {
 
-enum class
-XCPP_MARK()
+XENUM_CLASS()
 TestEnum : std::uint8_t {
     kConstant1,
     kConstant2,
     kConstant3
 };
 
-XCPP_MARK()
+XMARK()
 void globalTestFunction2();
 
 } // namespace TestXcpp
