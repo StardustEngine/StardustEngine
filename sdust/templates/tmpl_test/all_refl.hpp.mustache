@@ -1,0 +1,19 @@
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// !! THIS FILE IS GENERATED, ANY CHANGES WILL BE LOST !!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+#pragma once
+
+{{#generated_files}}#include "{{file_path}}"
+{{/generated_files}}
+
+namespace TestXcpp {
+namespace MetaRegistrar {
+
+inline void registerModule_{{module_name}}(std::unordered_map<std::string, unsigned>& metadata) {
+    {{#generated_files}}registerFile_{{file_name}}(metadata);
+    {{/generated_files}}
+}
+
+} // namespace MetaRegistrar
+} // namespace TestXcpp

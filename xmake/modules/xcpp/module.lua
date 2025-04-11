@@ -1,6 +1,7 @@
 import("core.base.task")
 import("core.language.language")
 import("core.tool.compiler")
+import("core.project.project")
 import("lib.detect.find_program")
 import("xcpp.utils", { alias = "xcpp_utils" })
 
@@ -25,13 +26,11 @@ function autogen_setup(target)
     local generatedir = path.join(autogendir, "generated")
     target:set("values", "generatedir", generatedir)
     os.mkdir(generatedir)
-
-    target:add("includedirs", generatedir, { public = true })
 end
 
 function autogen_process(target)
 
-    print("generating meta for \"%s\".", target:name())
+    print("generating meta for \"%s\".", target:values("ownername"))
 
     -- collect all header files and generate "collection.hpp"
     local collection = "#pragma once\n"
@@ -44,14 +43,15 @@ function autogen_process(target)
 
     cprint("${bright green}generated meta:${clear} %s", collection_path)
 
-    -- collect xparse's arguments and run it
+    -- input xparse's arguments and run it
     local args = {
         collection_path,
         "--root=" .. target:values("rootdir"),
         "--output=" .. target:values("metadir"),
     }
 
-    local compilations = compiler.compflags(".cpp", { target = target })
+    -- input owner's compile flags
+    local compilations = compiler.compflags(".cpp", { target = project.target(target:values("ownername")) })
     if target:toolchain("msvc") or target:toolchain("clang-cl") then
         table.insert(compilations, "--driver-mode=cl")
     end

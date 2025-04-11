@@ -1,0 +1,43 @@
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// !! THIS FILE IS GENERATED, ANY CHANGES WILL BE LOST !!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+#pragma once
+
+#include <string>
+#include <unordered_map>
+
+namespace TestXcpp {
+namespace MetaRegistrar {
+
+{{#records}}inline void registerRecord_{{name}}(std::unordered_map<std::string, unsigned>& metadata) {
+    metadata["{{name}}"] = 1;
+}
+{{/records}}
+
+{{#enums}}inline void registerEnum_{{name}}(std::unordered_map<std::string, unsigned>& metadata) {
+    metadata["{{name}}"] = 1;
+}
+{{/enums}}
+
+{{#functions}}inline void registerFunction_{{name}}(std::unordered_map<std::string, unsigned>& metadata) {
+    metadata["{{name}}"] = 1;
+}
+{{/functions}}
+
+inline void registerFile_{{sourcefile_name}}(std::unordered_map<std::string, unsigned>& metadata) {
+    // records
+    {{#records}}registerRecord_{{name}}(metadata);
+    {{/records}}
+
+    // enums
+    {{#enums}}registerEnum_{{name}}(metadata);
+    {{/enums}}
+
+    // functions
+    {{#functions}}registerFunction_{{name}}(metadata);
+    {{/functions}}
+}
+
+} // namespace MetaRegistrar
+} // namespace TestXcpp
