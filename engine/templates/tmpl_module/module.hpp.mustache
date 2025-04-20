@@ -1,0 +1,19 @@
+#pragma once
+
+#include "sdust_core/module/module.hpp"
+#include "sdust_core/singleton.hpp"
+
+namespace sdust {
+
+class {{module_class_name}} : public IModule, Singleton<{{module_class_name}}> {
+public:
+    virtual void    load() override;
+    virtual void    unload() override;
+    virtual int     exec(int /*argc*/, char** /*argv*/) override;
+
+    {{module_class_name}}() {
+        
+    }
+};
+
+} // namespace sdust

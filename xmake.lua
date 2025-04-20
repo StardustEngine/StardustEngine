@@ -21,4 +21,4 @@ includes("xmake/rules.lua")
 includes("xmake/global.lua")
 
 -- engine's targets
-includes("sdust/xmake.lua")
+includes("engine/xmake.lua")

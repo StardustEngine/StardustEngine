@@ -1,0 +1,24 @@
+#pragma once
+
+#include <string>
+#include <unordered_map>
+
+namespace TestXcpp {
+namespace MetaRegistrar {
+
+inline void registerModule_{{module.name}}(std::unordered_map<std::string, unsigned>& metadata) {
+    // records
+    {{#database.records}}metadata["{{name}}"] = 1;
+    {{/database.records}}
+
+    // functions
+    {{#database.functions}}metadata["{{name}}"] = 1;
+    {{/database.functions}}
+
+    // enums
+    {{#database.enums}}metadata["{{name}}"] = 1;
+    {{/database.enums}}
+}
+
+} // namespace MetaRegistrar
+} // namespace TestXcpp
