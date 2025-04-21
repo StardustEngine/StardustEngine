@@ -18,19 +18,23 @@ autogen_tmpl("sdust.tmpl.test")
         local metadata_str = utils.parse(target)
         io.writefile(path.join(autogendir, "meta.json"), metadata_str)
 
-        local module_metadata = json.decode(metadata_str)
+        local prefixed_words = utils.naming.normalize(target:values("ownername"), { separator = "([%.])" })
+        local name_without_prefix = prefixed_words[#prefixed_words]
+
+        local normalized_words = utils.naming.normalize(name_without_prefix, { separator = "([%_])" })
         local processed_module_metadata = {
-            module = { name = utils.naming.to_uppercamel(target:values("ownername")) },
+            module = { name = utils.naming.to_uppercamel(normalized_words) },
             database = { records = {}, functions = {}, enums = {} }
         }
 
+        local module_metadata = json.decode(metadata_str)
         for _, file_metadata in ipairs(module_metadata) do
             table.join2(processed_module_metadata.database.records, file_metadata.database.records)
             table.join2(processed_module_metadata.database.functions, file_metadata.database.functions)
             table.join2(processed_module_metadata.database.enums, file_metadata.database.enums)
         end
 
-        local target_gendir = path.join(target:values("gendir"), target:values("ownername"))
+        local target_gendir = path.join(target:values("gendir"), name_without_prefix)
         os.mkdir(target_gendir)
 
         local registrar_tmpl = path.join(os.scriptdir(), "registrar.hpp.mustache")

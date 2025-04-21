@@ -1,5 +1,5 @@
-target("sdust.module")
+target("sdust.module.module")
     set_kind("static")
     add_includedirs(".", { public = true })
     add_files("sdust/module/**.cpp")
-    add_deps("sdust.base")
+    add_deps("sdust.module.base")

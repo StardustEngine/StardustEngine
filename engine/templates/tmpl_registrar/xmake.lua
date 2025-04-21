@@ -14,6 +14,6 @@ autogen_tmpl("sdust.tmpl.registrar")
         end
     end)
 
-    before_build(function (target)
+    on_build(function (target)
 
     end)
