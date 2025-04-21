@@ -16,3 +16,8 @@ function target_component_autogen(owner)
     target_component(owner, "autogen")
         set_kind("headeronly")
 end
+
+function autogen_tmpl(name)
+    rule(name)
+        add_deps("sdust.tmpl", { order = true })
+end

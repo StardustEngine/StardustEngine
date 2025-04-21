@@ -1,9 +1,6 @@
-rule("sdust.tmpl.test")
+autogen_tmpl("sdust.tmpl.test")
+
     on_config(function (target)
-        import("xcpp.autogen")
-
-        autogen.setup(target)
-
         local gendir = path.join(target:values("autogendir"), "gen")
         os.mkdir(gendir)
         target:set("values", "gendir", gendir)
@@ -11,7 +8,7 @@ rule("sdust.tmpl.test")
         target:add("includedirs", gendir, { public = true })
     end)
 
-    before_build(function (target)
+    on_build(function (target)
         import("core.base.json")
         import("xcpp.utils")
         import("xcpp.autogen")
@@ -41,8 +38,4 @@ rule("sdust.tmpl.test")
             registrar_tmpl, processed_module_metadata,
             path.join(target_gendir, path.basename(registrar_tmpl))
         )
-    end)
-
-    on_clean(function (target)
-        import("xcpp.autogen").clean(target)
     end)

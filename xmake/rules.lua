@@ -1,3 +1,13 @@
+rule("sdust.tmpl")
+    set_extensions(".h", ".hpp")
+    add_imports("xcpp.autogen")
+    on_config(function (target)
+        autogen.setup(target)
+    end)
+    on_clean(function (target)
+        autogen.clean(target)
+    end)
+
 rule("sdust.test")
     on_load(function (target)
         target:set("default", false)
