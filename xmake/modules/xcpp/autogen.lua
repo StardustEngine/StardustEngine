@@ -5,8 +5,7 @@ function __get_autogendir()
 end
 
 function setup(target)
-    local owner = project.target(target:values("ownername"))
-    local autogendir = path.join(__get_autogendir(), owner:get("group"), owner:values("rawname"))
+    local autogendir = path.join(__get_autogendir(), target:values("ownername"))
     target:set("values", "autogendir", autogendir)
     os.mkdir(autogendir)
 end
