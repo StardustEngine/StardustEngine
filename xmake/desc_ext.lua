@@ -2,6 +2,8 @@ function target_scoped(name, scope)
     target(scope .. "." .. name)
         set_group(scope)
         set_values("rawname", name)
+        set_basename(name)
+        set_targetdir(path.join("$(buildir)/$(plat)/$(arch)/$(mode)", scope))
 end
 
 function target_component(owner, name)
