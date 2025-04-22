@@ -13,6 +13,7 @@ function target_component(owner, name)
 
     target(component_name)
         set_default(false)
+        set_group("component")
         set_policy("build.fence", true)
         set_values("ownername", owner)
         set_values("component", name)
