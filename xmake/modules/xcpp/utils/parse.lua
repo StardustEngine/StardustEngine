@@ -7,7 +7,7 @@ function main(target)
 
     print("parsing and generating meta for \"%s\".", ownername)
 
-    local collection_files = target:sourcebatches()["sdust.tmpl"].sourcefiles
+    local collection_files = target:sourcebatches()["sdust.tmpl.base"].sourcefiles
     if not collection_files or #collection_files == 0 then
         raise("no file specified for %s, parsing ended.", ownername)
     end

@@ -1,7 +1,7 @@
 add_requires("eastl")
 add_requires("mimalloc")
 
-target("sdust.module.base")
+target_scoped("base", "module")
     set_kind("static")
     add_includedirs(".", { public = true })
     add_files("sdust/base/**.cpp")

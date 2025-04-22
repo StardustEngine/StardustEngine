@@ -1,4 +1,5 @@
 set_project("stardust")
+set_xmakever("2.9.8")
 
 -- description scope extensions
 includes("xmake/desc_ext.lua")

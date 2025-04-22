@@ -1,3 +1,9 @@
+function target_scoped(name, scope)
+    target(scope .. "." .. name)
+        set_group(scope)
+        set_values("rawname", name)
+end
+
 function target_component(owner, name)
     local component_name = owner .. "." .. name
     target(owner)
@@ -15,9 +21,4 @@ end
 function target_component_autogen(owner)
     target_component(owner, "autogen")
         set_kind("headeronly")
-end
-
-function autogen_tmpl(name)
-    rule(name)
-        add_deps("sdust.tmpl", { order = true })
 end

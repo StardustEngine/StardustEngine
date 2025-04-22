@@ -1,4 +1,6 @@
-autogen_tmpl("sdust.tmpl.test")
+rule("sdust.tmpl.test")
+
+    add_deps("sdust.tmpl.base", { order = true })
 
     on_config(function (target)
         local gendir = path.join(target:values("autogendir"), "gen")

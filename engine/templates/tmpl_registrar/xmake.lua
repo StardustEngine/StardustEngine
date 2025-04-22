@@ -1,4 +1,6 @@
-autogen_tmpl("sdust.tmpl.registrar")
+rule("sdust.tmpl.registrar")
+
+    add_deps("sdust.tmpl.base", { order = true })
 
     on_config(function (target)
         import("core.project.project")
