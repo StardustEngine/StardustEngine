@@ -62,7 +62,7 @@ static mustache::data __internalConvertLuaValue(lua_State* lua, int index)
         return mustache::data(oss.str());
     }
     case LUA_TBOOLEAN:
-        return mustache::data(lua_toboolean(lua, index) ? "true" : "false");
+        return mustache::data(lua_toboolean(lua, index) ? true : false);
     case LUA_TTABLE:
         return __internalConvertLuaTable(lua, index);
     default:
