@@ -12,6 +12,7 @@ rule("sdust.tmpl.test")
 
     on_build(function (target)
         import("core.base.json")
+        import("core.project.project")
         import("xcpp.utils")
         import("xcpp.autogen")
 
@@ -20,10 +21,10 @@ rule("sdust.tmpl.test")
         local metadata_str = utils.parse(target)
         io.writefile(path.join(autogendir, "meta.json"), metadata_str)
 
-        local prefixed_words = utils.naming.normalize(target:values("ownername"), { separator = "([%.])" })
-        local name_without_prefix = prefixed_words[#prefixed_words]
+        local owner = project.target(target:values("ownername"))
+        local owner_rawname = owner:values("rawname")
 
-        local normalized_words = utils.naming.normalize(name_without_prefix, { separator = "([%_])" })
+        local normalized_words = utils.naming.normalize(owner_rawname, { separator = "([%_])" })
         local processed_module_metadata = {
             module = { name = utils.naming.to_uppercamel(normalized_words) },
             database = { records = {}, functions = {}, enums = {} }
@@ -36,7 +37,7 @@ rule("sdust.tmpl.test")
             table.join2(processed_module_metadata.database.enums, file_metadata.database.enums)
         end
 
-        local target_gendir = path.join(target:values("gendir"), name_without_prefix)
+        local target_gendir = path.join(target:values("gendir"), owner_rawname)
         os.mkdir(target_gendir)
 
         local registrar_tmpl = path.join(os.scriptdir(), "registrar.hpp.mustache")
